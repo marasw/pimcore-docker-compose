@@ -3,6 +3,7 @@ services:
   redis:
     image: redis:alpine
     container_name: pimcore-redis
+    network_mode: bridge
 
   db:
     image: mariadb:10.4
@@ -16,12 +17,14 @@ services:
       - MYSQL_DATABASE=pimcore
       - MYSQL_USER=pimcore
       - MYSQL_PASSWORD=pimcore
+    network_mode: bridge
 
   adminer:
     image: adminer
     restart: always
     ports:
       - 2002:8080
+    network_mode: bridge
 
   php:
     image: dpfaffenbauer/pimcore:PHP7.2-apache
@@ -29,11 +32,12 @@ services:
     volumes:
       - .:/var/www/html:cached
     ports:
-     - "2000:80"
-     - "2001:443"
+      - "2000:80"
+      - "2001:443"
     links:
-     - db:db
-     - redis:redis
+      - db:db
+      - redis:redis
+    network_mode: bridge
 
   php-debug:
     image: dpfaffenbauer/pimcore:PHP7.2-apache-debug
@@ -41,12 +45,13 @@ services:
     volumes:
       - .:/var/www/html:cached
     ports:
-     - "2006:80"
+      - "2006:80"
     links:
-     - db:db
-     - redis:redis
+      - db:db
+      - redis:redis
     environment:
       - PHP_IDE_CONFIG="serverName=localhost"
+    network_mode: bridge
 
 volumes:
   pimcore-database:
